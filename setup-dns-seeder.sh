@@ -2,7 +2,7 @@
 
 set -e
 
-echo "🔧 Setting up AdventureCoin Lightweight DNS Seeder..."
+echo "🔧 Setting up MinersWorldCoin Lightweight DNS Seeder..."
 
 # 1. Install dependencies
 echo "📦 Installing Python packages..."
@@ -10,9 +10,9 @@ pip install --upgrade pip
 pip install dnslib requests
 
 # 2. Seeder directory and script
-SEEDER_DIR="/opt/advc-dnsseeder"
+SEEDER_DIR="/opt/mwc-dnsseeder"
 SEEDER_SCRIPT="$SEEDER_DIR/api_dns_seeder.py"
-GITHUB_SCRIPT_URL="https://raw.githubusercontent.com/CryptoDevelopmentServices/Lightweight_DNS_Seeder/main/api_dns_seeder.py"
+GITHUB_SCRIPT_URL="https://raw.githubusercontent.com/Miners-World-Coin-MWC/Lightweight_DNS_Seeder/main/api_dns_seeder.py"
 
 echo "📁 Creating seeder directory..."
 sudo mkdir -p "$SEEDER_DIR"
@@ -23,9 +23,9 @@ sudo chmod +x "$SEEDER_SCRIPT"
 
 # 3. Create systemd service
 echo "🛠️ Creating systemd service..."
-sudo tee /etc/systemd/system/advc-dnsseeder.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/mwc-dnsseeder.service > /dev/null <<EOF
 [Unit]
-Description=AdventureCoin DNS Seeder
+Description=MinersWorldCoin DNS Seeder
 After=network.target
 
 [Service]
@@ -41,8 +41,8 @@ EOF
 # 4. Enable and start service
 sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
-sudo systemctl enable advc-dnsseeder.service
-sudo systemctl restart advc-dnsseeder.service
+sudo systemctl enable mwc-dnsseeder.service
+sudo systemctl restart mwc-dnsseeder.service
 
 # 5. Open DNS port
 echo "🌐 Opening DNS port 53..."
@@ -50,4 +50,4 @@ sudo ufw allow 53
 sudo ufw reload
 
 echo "✅ DNS Seeder is installed and running!"
-echo "🔍 Use: 'sudo systemctl status advc-dnsseeder' to check status"
+echo "🔍 Use: 'sudo systemctl status mwc-dnsseeder' to check status"

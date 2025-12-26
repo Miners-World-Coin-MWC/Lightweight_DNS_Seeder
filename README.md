@@ -1,4 +1,4 @@
-# 🌐 Lightweight DNS Seeder for AdventureCoin
+# 🌐 Lightweight DNS Seeder for MinersWorldCoin
 
 A simple, API-driven, Python-based DNS seeder for your cryptocurrency network. It uses `dnslib` and a `/peers` API to serve healthy nodes over DNS.
 
@@ -19,7 +19,7 @@ pip install dnslib requests
 Run this to set up everything via `setup-dns-seeder.sh`:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/CryptoDevelopmentServices/Lightweight_DNS_Seeder/main/setup-dns-seeder.sh | sudo bash
+curl -sL https://raw.githubusercontent.com/Miners-World-Coin-MWC/Lightweight_DNS_Seeder/main/setup-dns-seeder.sh | sudo bash
 ```
 
 > This script:
@@ -36,7 +36,7 @@ curl -sL https://raw.githubusercontent.com/CryptoDevelopmentServices/Lightweight
 Run this to update and backup everything via `update_dns_seeder.sh`:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/CryptoDevelopmentServices/Lightweight_DNS_Seeder/main/update_dns_seeder.sh | sudo bash
+curl -sL https://raw.githubusercontent.com/Miners-World-Coin-MWC/Lightweight_DNS_Seeder/main/update_dns_seeder.sh | sudo bash
 ```
 ---
 
@@ -45,7 +45,7 @@ curl -sL https://raw.githubusercontent.com/CryptoDevelopmentServices/Lightweight
 ### 1. Clone the Repo & Run Seeder
 
 ```bash
-git clone https://github.com/CryptoDevelopmentServices/Lightweight_DNS_Seeder.git
+git clone https://github.com/Miners-World-Coin-MWC/Lightweight_DNS_Seeder.git
 cd Lightweight_DNS_Seeder
 sudo python3 api_dns_seeder.py
 ```
@@ -69,7 +69,7 @@ Also ensure your hosting provider/firewall allows it.
 Point your A (IPv4) and AAAA (IPv6) records to the IP address of the server running this script:
 
 ```
-seed.adventurecoin.quest → your.server.ip
+seed.minersworld.org → your.server.ip
 ```
 
 ---
@@ -79,7 +79,7 @@ seed.adventurecoin.quest → your.server.ip
 Update your `chainparams.cpp` file like so:
 
 ```cpp
-vSeeds.emplace_back("seed.adventurecoin.quest");
+vSeeds.emplace_back("seed.minersworld.org");
 ```
 
 ---
@@ -111,7 +111,6 @@ vSeeds.emplace_back("seed.adventurecoin.quest");
 ---
 
 ## 🤝 Maintained by
-
 **[Crypto Development Services](https://github.com/CryptoDevelopmentServices)**  
 Join the community on [Discord](https://discord.gg/vrvfhQ4FRa)
 

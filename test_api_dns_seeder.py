@@ -18,7 +18,7 @@ def test_update_peers():
         mock_get.return_value.json.return_value = mock_response
 
         # Disable background thread for testing
-        resolver = PeerResolver("https://api.adventurecoin.quest/peers", start_thread=False)
+        resolver = PeerResolver("https://api.minersworld.org/peers", start_thread=False)
 
         # Call update_peers directly
         resolver.update_peers()
@@ -37,7 +37,7 @@ def test_update_peers():
 # Test DNS resolution (A and AAAA queries)
 def test_resolve():
     # Create resolver with static peer lists
-    resolver = PeerResolver("https://api.adventurecoin.quest/peers", start_thread=False)
+    resolver = PeerResolver("https://api.minersworld.org/peers", start_thread=False)
     resolver.ipv4_peers = ["192.168.1.1"]
     resolver.ipv6_peers = ["2001:db8::ff00:42:8329"]
 

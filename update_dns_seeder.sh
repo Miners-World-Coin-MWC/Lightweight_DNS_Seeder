@@ -2,7 +2,7 @@
 
 set -e
 
-echo "🔧 Updating AdventureCoin Lightweight DNS Seeder..."
+echo "🔧 Updating MinersWorldCoin Lightweight DNS Seeder..."
 
 # 1. Install/Upgrade dependencies
 echo "📦 Installing/Upgrading Python packages..."
@@ -10,9 +10,9 @@ pip install --upgrade pip
 pip install --upgrade dnslib requests
 
 # 2. Seeder directory and script
-SEEDER_DIR="/opt/advc-dnsseeder"
+SEEDER_DIR="/opt/mwc-dnsseeder"
 SEEDER_SCRIPT="$SEEDER_DIR/api_dns_seeder.py"
-GITHUB_SCRIPT_URL="https://raw.githubusercontent.com/CryptoDevelopmentServices/Lightweight_DNS_Seeder/main/api_dns_seeder.py"
+GITHUB_SCRIPT_URL="https://raw.githubusercontent.com/Miners-World-Coin-MWC/Lightweight_DNS_Seeder/main/api_dns_seeder.py"
 
 # 3. Backup the existing script
 echo "🗂️ Backing up existing seeder script..."
@@ -37,10 +37,10 @@ sudo chmod +x "$SEEDER_SCRIPT"
 echo "🔄 Restarting DNS Seeder service..."
 sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
-sudo systemctl restart advc-dnsseeder.service
+sudo systemctl restart mwc-dnsseeder.service
 
 # 7. Check DNS Seeder service status
 echo "🔍 Checking DNS Seeder service status..."
-sudo systemctl status advc-dnsseeder.service
+sudo systemctl status mwc-dnsseeder.service
 
 echo "✅ DNS Seeder has been updated and restarted!"
