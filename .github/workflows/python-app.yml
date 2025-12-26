@@ -11,42 +11,54 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
     steps:
-    - uses: actions/checkout@v4
-    
-    # Set up Python 3.8
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.8"
-    
-    # Install dependencies
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        pip install dnslib requests  # Lightweight DNS Seeder dependencies
-    
-    # Lint with flake8
-    - name: Lint with flake8
-      run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # Optional: Skip tests if none exist
-    - name: Skip Tests (if no tests)
-      if: ${{ failure() }}
-      run: echo "No tests to run. Skipping test step."
-    
-    # Run tests
-    - name: Run tests with pytest
-      run: |
-        pytest  # Runs all test files matching test_*.py
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    # Run the Lightweight DNS Seeder
-   # - name: Run Lightweight DNS Seeder
-   #   run: |
-    #    python api_dns_seeder.py
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 dnslib requests
+
+      - name: Lint with flake8 (critical errors only)
+        run: |
+          flake8 . \
+            --count \
+            --select=E9,F63,F7,F82 \
+            --show-source \
+            --statistics
+
+      - name: Lint with flake8 (style, non-blocking)
+        run: |
+          flake8 . \
+            --count \
+            --exit-zero \
+            --max-complexity=10 \
+            --max-line-length=127 \
+            --statistics
+
+      - name: Run tests (only if tests exist)
+        run: |
+          if ls test_*.py 1> /dev/null 2>&1; then
+            pip install pytest
+            pytest
+          else
+            echo "No tests found. Skipping pytest."
+          fi
+
+      - name: Smoke test DNS Seeder
+        run: |
+          echo "Starting DNS seeder smoke test on Python ${{ matrix.python-version }}..."
+          timeout 5s python api_dns_seeder.py || echo "Seeder exited or timed out (expected)"

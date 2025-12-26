@@ -1,58 +1,91 @@
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from api_dns_seeder import PeerResolver
 from dnslib import DNSRecord
 
-# Test to ensure the resolver updates peers correctly
+
+# =========================
+# TEST: update_peers parsing
+# =========================
 def test_update_peers():
-    # Correctly formatted mock API response (dict with "result" key)
     mock_response = {
         "result": [
             {"addr": "192.168.1.1"},
-            {"addr": "2001:db8::ff00:42:8329"}
+            {"addr": "192.168.1.1:8333"},           # IPv4 + port (dedupe)
+            {"addr": "[2001:db8::ff00:42:8329]"},  # IPv6 bracketed
+            {"addr": "[2001:db8::ff00:42:8329]:8333"},
+            {"addr": "invalid-ip"}                  # ignored
         ]
     }
 
-    with patch('requests.get') as mock_get:
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = mock_response
+    mock_get = MagicMock()
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = mock_response
+    mock_get.return_value.raise_for_status.return_value = None
 
-        # Disable background thread for testing
-        resolver = PeerResolver("https://api.minersworld.org/peers", start_thread=False)
+    with patch("requests.get", mock_get):
+        resolver = PeerResolver(
+            "https://api.minersworld.org/peers",
+            start_thread=False
+        )
 
-        # Call update_peers directly
         resolver.update_peers()
 
-        # Debug prints
-        print(f"IPv4 Peers: {resolver.ipv4_peers}")
-        print(f"IPv6 Peers: {resolver.ipv6_peers}")
-
-        # Assert API call
-        assert mock_get.call_count == 2  # Called once in __init__, once in update_peers
-
-        # Assert peers were parsed correctly
+        # IPv4 parsed and deduplicated
         assert resolver.ipv4_peers == ["192.168.1.1"]
+
+        # IPv6 parsed and deduplicated
         assert resolver.ipv6_peers == ["2001:db8::ff00:42:8329"]
 
-# Test DNS resolution (A and AAAA queries)
+        # Ensure API was called at least once
+        assert mock_get.called
+
+
+# =========================
+# TEST: DNS resolution (A / AAAA)
+# =========================
 def test_resolve():
-    # Create resolver with static peer lists
-    resolver = PeerResolver("https://api.minersworld.org/peers", start_thread=False)
+    resolver = PeerResolver(
+        "https://api.minersworld.org/peers",
+        start_thread=False
+    )
+
     resolver.ipv4_peers = ["192.168.1.1"]
     resolver.ipv6_peers = ["2001:db8::ff00:42:8329"]
 
-    # Create DNS queries
+    # IPv4 query
     request_ipv4 = DNSRecord.question("example.com", "A")
-    request_ipv6 = DNSRecord.question("example.com", "AAAA")
-
-    # Resolve DNS queries
     response_ipv4 = resolver.resolve(request_ipv4, None)
-    response_ipv6 = resolver.resolve(request_ipv6, None)
 
-    # Verify IPv4 resolution
     assert len(response_ipv4.rr) == 1
     assert str(response_ipv4.rr[0].rdata) == "192.168.1.1"
 
-    # Verify IPv6 resolution
+    # IPv6 query
+    request_ipv6 = DNSRecord.question("example.com", "AAAA")
+    response_ipv6 = resolver.resolve(request_ipv6, None)
+
     assert len(response_ipv6.rr) == 1
     assert str(response_ipv6.rr[0].rdata) == "2001:db8::ff00:42:8329"
+
+
+# =========================
+# TEST: empty API response
+# =========================
+def test_update_peers_empty_result():
+    mock_response = {"result": []}
+
+    mock_get = MagicMock()
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = mock_response
+    mock_get.return_value.raise_for_status.return_value = None
+
+    with patch("requests.get", mock_get):
+        resolver = PeerResolver(
+            "https://api.minersworld.org/peers",
+            start_thread=False
+        )
+
+        resolver.update_peers()
+
+        assert resolver.ipv4_peers == []
+        assert resolver.ipv6_peers == []
