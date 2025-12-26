@@ -26,7 +26,7 @@ curl -sL https://raw.githubusercontent.com/Miners-World-Coin-MWC/Lightweight_DNS
 > - Installs dependencies
 > - Copies `api_dns_seeder.py`
 > - Sets up a systemd service
-> - Opens port 8053 (TCP & UDP)
+> - Opens port 4408 (TCP & UDP)
 > - Starts the DNS Seeder
 
 ---
@@ -54,10 +54,10 @@ sudo python3 api_dns_seeder.py
 
 ## 🔥 Firewall Rules
 
-Open DNS port 8053 for both protocols:
+Open DNS port 4408 for both protocols:
 
 ```bash
-sudo ufw allow 8053
+sudo ufw allow 4408
 ```
 
 Also ensure your hosting provider/firewall allows it.

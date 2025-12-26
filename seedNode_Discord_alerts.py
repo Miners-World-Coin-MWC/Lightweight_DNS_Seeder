@@ -75,7 +75,7 @@ def health_check():
 
         # Peer check: look for A records for your seeder domain
         peer_check = subprocess.run(
-            ["dig", "A", "51.15.16.47", "@localhost", "-p", "4408"],
+            ["dig", "A", "seed.minersworld.org", "@localhost", "-p", "4408"],
             capture_output=True,
             text=True
         )
